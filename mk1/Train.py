@@ -4,23 +4,27 @@ import random
 import numpy as np
 import soundfile as sf
 import tensorflow as tf
+from tensorflow import keras
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 
 def _create_rnn():
     model = tf.keras.Sequential()
+    model.add(keras.layers.Conv2D(210, (3, 3), activation="relu", input_shape=(210, 210, 1)))
+    model.add(tf.)
     model.add(tf.keras.layers.Input(shape=(210, 210)))
 
-    model.add(tf.keras.layers.Conv1D(512, 2, strides=2, activation="relu"))
-    model.add(tf.keras.layers.Conv1D(512, 2, strides=2, activation="relu"))
-    model.add(tf.keras.layers.Conv1D(256, 2, strides=2, activation="relu"))
-    model.add(tf.keras.layers.Conv1D(256, 2, strides=2, activation="relu"))
-    model.add(tf.keras.layers.Conv1D(210 * 210, 2, activation="relu"))
-    model.add(tf.keras.layers.Reshape((210, 210)))
-    model.add(tf.keras.layers.Activation("softmax"))
+    model.add(tf.nn.conv2d.layers.Conv1D(filters=512, kernel_size=2, activation="relu"))
+    model.add(tf.keras.layers.Conv1D(filters=512, kernel_size=2, activation="relu"))
+    model.add(tf.keras.layers.Conv1D(filters=1024, kernel_size=2, activation="relu"))
+    model.add(tf.keras.layers.Conv1D(filters=1024, kernel_size=2, activation="relu"))
+    model.add(tf.keras.layers.MaxPooling1D(pool_size=2))
+    model.add(tf.keras.layers.Flatten())
+    model.add(tf.keras.layers.Dense(105 * 105, activation="relu"))
+    model.add(tf.keras.layers.Dense(210 * 210, activation="softmax"))
 
-    model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
 
 
